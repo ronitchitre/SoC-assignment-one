@@ -84,4 +84,4 @@ def data_reader(address):
     return result
 
 
-my_MDP = data_reader(r"mdp/continuing-mdp-10-5.txt")
+my_MDP = data_reader(r"mdp/episodic-mdp-2-2.txt")

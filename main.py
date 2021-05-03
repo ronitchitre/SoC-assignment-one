@@ -21,12 +21,12 @@ def bellman_equation(state, action_index, mdp):
 
 
 def value_iteration(mdp):
-    ERR = 1000
+    ERR = 1000.0
     while not abs(ERR) <= 0.0000000000000001:
         for state in mdp.state_set:
             cur_max = -1*inf
             optimal_action = None
-            value = state.value
+            # value = state.value
             old_value = state.value
             for action in state.actions:
                 value = bellman_equation(state, action.index, mdp)
@@ -35,12 +35,17 @@ def value_iteration(mdp):
                     optimal_action = action
             state.optimal_action = optimal_action
             state.value = cur_max
-            ERR = min(abs(old_value - state.value), ERR)
+            if state.value == 0:
+                pass
+            else:
+                ERR = min(float(abs(old_value - state.value)), ERR)
     return mdp
 
 
-given_MDP = MDP_Reader.data_reader(r"mdp\continuing-mdp-50-20.txt")
+given_MDP = MDP_Reader.data_reader(r"mdp/continuing-mdp-50-20.txt")
 given_MDP = value_iteration(given_MDP)
 
 for i in given_MDP.state_set:
-    print(i.value)
+    print(i.value, i.optimal_action.index)
+
+
