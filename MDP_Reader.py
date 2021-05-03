@@ -14,6 +14,7 @@ class State:
         self.index = index
         self.max_actions = max_actions
         self.actions = []
+        self.optimal_action = None
         self.value = 0
         for i in range(max_actions):
             action = Action(i)
@@ -29,6 +30,10 @@ class Action:
         self.nxt_states = []
         self.rewards = []
         self.prob = []
+        self.action_func = []
+
+    def set_action_func(self):
+        self.action_func = list(zip(self.nxt_states, self.rewards, self.prob))
 
 
 def state_set(trans_inf, state_num, action_num):
@@ -41,6 +46,7 @@ def state_set(trans_inf, state_num, action_num):
             state.actions[int(current_inf[1])].nxt_states.append(current_inf[2])
             state.actions[int(current_inf[1])].rewards.append(current_inf[3])
             state.actions[int(current_inf[1])].prob.append(current_inf[4])
+            state.actions[int(current_inf[1])].set_action_func()
             counter += 1
             if counter >= len(trans_inf):
                 break
@@ -78,5 +84,4 @@ def data_reader(address):
     return result
 
 
-my_MDP = data_reader(r"mdp/continuing-mdp-2-2.txt")
-print(my_MDP.state_set[0].actions[0].index)
+my_MDP = data_reader(r"mdp/continuing-mdp-10-5.txt")
