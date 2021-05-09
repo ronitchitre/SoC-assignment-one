@@ -1,7 +1,7 @@
 # SoC Assignment 1
 # MDP Solver
 
-import MDP_Reader
+import planner_class
 from math import inf
 
 
@@ -41,11 +41,9 @@ def value_iteration(mdp):
                 ERR = min(float(abs(old_value - state.value)), ERR)
     return mdp
 
-
-given_MDP = MDP_Reader.data_reader(r"mdp/continuing-mdp-50-20.txt")
-given_MDP = value_iteration(given_MDP)
-
-for i in given_MDP.state_set:
-    print(i.value, i.optimal_action.index)
-
-
+#
+# given_MDP = planner_class.data_reader(r"mdp/continuing-mdp-50-20.txt")
+# given_MDP = value_iteration(given_MDP)
+#
+# for i in given_MDP.state_set:
+#     print(i.value, i.optimal_action.index)
