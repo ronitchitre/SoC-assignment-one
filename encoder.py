@@ -2,7 +2,7 @@
 # Actions [0, 1, 2, 3] correspond to [north, south, east, west]
 import planner
 import planner_class
-# import decoder
+import decoder
 
 
 def text_to_matrix(address):
@@ -141,7 +141,7 @@ def matrix_to_mdp(state_index_matrix, address):
     return mdp
 
 
-addr = "data/maze/grid20.txt"
+addr = "data/maze/grid60.txt"
 file = r"{}".format(addr)
 matrix_global = text_to_matrix(file)
 # temp = matrix_global
@@ -184,4 +184,5 @@ for y in range(len(state_index_matrix_global)):
             counter += 1
 for i in state_index_matrix_global:
     print(i)
-# decoder.path_find(mdp)
+
+decoder.path_find(mdp, mdp.state_set[mdp.start])
