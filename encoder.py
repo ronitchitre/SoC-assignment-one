@@ -1,7 +1,8 @@
 # Encodes the maze into an mdp
-# Actions [1, 2, 3, 4] correspond to [north, south, east, west]
+# Actions [0, 1, 2, 3] correspond to [north, south, east, west]
 import planner
 import planner_class
+# import decoder
 
 
 def text_to_matrix(address):
@@ -9,7 +10,7 @@ def text_to_matrix(address):
     data = open(address, "r")
     while True:
         row_str = data.readline()
-        if (row_str == ""):
+        if row_str == "":
             break
         row_str = list(row_str.split())
         row = map(int, row_str)
@@ -19,7 +20,8 @@ def text_to_matrix(address):
     return maze_matrix
 
 
-def give_index(grid):
+def give_index(address):
+    grid = text_to_matrix(address)
     state_index_matrix = grid
     state_index_counter = 0
     for y in range(len(grid)):
@@ -33,6 +35,7 @@ def give_index(grid):
 
 
 reward = -1
+reward_same_state = -3
 terminal_reward = 1
 disc_fac = 1
 
@@ -62,12 +65,12 @@ def matrix_to_mdp(state_index_matrix, address):
                                     state.actions[0].set_action_func()
                                 else:
                                     state.actions[0].nxt_states.append(state_index_matrix[y][x])
-                                    state.actions[0].rewards.append(reward)
+                                    state.actions[0].rewards.append(reward_same_state)
                                     state.actions[0].prob.append(1)
                                     state.actions[0].set_action_func()
                             else:
                                 state.actions[0].nxt_states.append(state_index_matrix[y][x])
-                                state.actions[0].rewards.append(reward)
+                                state.actions[0].rewards.append(reward_same_state)
                                 state.actions[0].prob.append(1)
                                 state.actions[0].set_action_func()
 
@@ -80,12 +83,12 @@ def matrix_to_mdp(state_index_matrix, address):
                                     state.actions[1].set_action_func()
                                 else:
                                     state.actions[1].nxt_states.append(state_index_matrix[y][x])
-                                    state.actions[1].rewards.append(reward)
+                                    state.actions[1].rewards.append(reward_same_state)
                                     state.actions[1].prob.append(1)
                                     state.actions[1].set_action_func()
                             else:
                                 state.actions[1].nxt_states.append(state_index_matrix[y][x])
-                                state.actions[1].rewards.append(reward)
+                                state.actions[1].rewards.append(reward_same_state)
                                 state.actions[1].prob.append(1)
                                 state.actions[1].set_action_func()
 
@@ -98,12 +101,12 @@ def matrix_to_mdp(state_index_matrix, address):
                                     state.actions[2].set_action_func()
                                 else:
                                     state.actions[2].nxt_states.append(state_index_matrix[y][x])
-                                    state.actions[2].rewards.append(reward)
+                                    state.actions[2].rewards.append(reward_same_state)
                                     state.actions[2].prob.append(1)
                                     state.actions[2].set_action_func()
                             else:
                                 state.actions[2].nxt_states.append(state_index_matrix[y][x])
-                                state.actions[2].rewards.append(reward)
+                                state.actions[2].rewards.append(reward_same_state)
                                 state.actions[2].prob.append(1)
                                 state.actions[2].set_action_func()
 
@@ -116,12 +119,12 @@ def matrix_to_mdp(state_index_matrix, address):
                                     state.actions[3].set_action_func()
                                 else:
                                     state.actions[3].nxt_states.append(state_index_matrix[y][x])
-                                    state.actions[3].rewards.append(reward)
+                                    state.actions[3].rewards.append(reward_same_state)
                                     state.actions[3].prob.append(1)
                                     state.actions[3].set_action_func()
                             else:
                                 state.actions[3].nxt_states.append(state_index_matrix[y][x])
-                                state.actions[3].rewards.append(reward)
+                                state.actions[3].rewards.append(reward_same_state)
                                 state.actions[3].prob.append(1)
                                 state.actions[3].set_action_func()
 
@@ -138,14 +141,47 @@ def matrix_to_mdp(state_index_matrix, address):
     return mdp
 
 
-addr = "data/maze/grid100.txt"
+addr = "data/maze/grid20.txt"
 file = r"{}".format(addr)
 matrix_global = text_to_matrix(file)
-state_index_matrix_global = give_index(matrix_global)
+# temp = matrix_global
+state_index_matrix_global = give_index(file)
+# print(matrix_global)
+# print(state_index_matrix_global)
 mdp = matrix_to_mdp(state_index_matrix_global, file)
+# for state in mdp.state_set:
+#     for action in state.actions:
+#         print(action.action_func)
+old_states = []
+for state in mdp.state_set:
+    old_states.append(state.value)
+while True:
+    mdp = planner.value_iteration(mdp)
+    checker = 0
+    # print("yay")
+    for state in range(len(mdp.state_set)):
+        if abs(mdp.state_set[state].value - old_states[state]) <= 0.000001:
+            # print(mdp.state_set[state].value, old_states[state])
+            pass
+        else:
+            checker = 1
+            break
+    old_states = []
+    if checker == 0:
+        break
+    for state in mdp.state_set:
+        old_states.append(state.value)
 
-mdp_new = planner.value_iteration(mdp)
-for i in mdp_new.state_set:
-    print(i.value, i.optimal_action.index)
 
-
+# print(mdp.state_set[mdp.end[0]].index)
+counter = 0
+for y in range(len(state_index_matrix_global)):
+    for x in range(len(state_index_matrix_global)):
+        if state_index_matrix_global[y][x] is None:
+            pass
+        else:
+            state_index_matrix_global[y][x] = mdp.state_set[counter].value
+            counter += 1
+for i in state_index_matrix_global:
+    print(i)
+# decoder.path_find(mdp)

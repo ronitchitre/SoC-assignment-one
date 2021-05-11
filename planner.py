@@ -9,6 +9,7 @@ def value_func(state_ind, mdp):
     for i in mdp.state_set:
         if i.index == state_ind:
             return i.value
+    print(state_ind)
 
 
 def bellman_equation(state, action_index, mdp):
@@ -16,7 +17,11 @@ def bellman_equation(state, action_index, mdp):
     for action in state.actions:
         if action.index == action_index:
             for nxt_state, reward, prob in action.action_func:
-                total += prob * (reward + mdp.dis_fac * value_func(nxt_state, mdp))
+                try:
+                    total += prob * (reward + mdp.dis_fac * value_func(nxt_state, mdp))
+                except:
+                    # print(prob, reward, mdp.dis_fac, value_func(nxt_state, mdp))
+                    print("yay")
     return total
 
 
@@ -41,8 +46,8 @@ def value_iteration(mdp):
                 ERR = min(float(abs(old_value - state.value)), ERR)
     return mdp
 
-#
-# given_MDP = planner_class.data_reader(r"mdp/continuing-mdp-50-20.txt")
+
+# given_MDP = planner_class.data_reader(r"data/mdp/continuing-mdp-50-20.txt")
 # given_MDP = value_iteration(given_MDP)
 #
 # for i in given_MDP.state_set:
