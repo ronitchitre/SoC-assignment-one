@@ -3,6 +3,8 @@
 import planner
 import planner_class
 import decoder
+import argparse
+parser = argparse.ArgumentParser()
 
 
 def text_to_matrix(address):
@@ -141,48 +143,28 @@ def matrix_to_mdp(state_index_matrix, address):
     return mdp
 
 
-addr = "data/maze/grid60.txt"
-file = r"{}".format(addr)
-matrix_global = text_to_matrix(file)
-# temp = matrix_global
-state_index_matrix_global = give_index(file)
-# print(matrix_global)
-# print(state_index_matrix_global)
-mdp = matrix_to_mdp(state_index_matrix_global, file)
-# for state in mdp.state_set:
-#     for action in state.actions:
-#         print(action.action_func)
-old_states = []
-for state in mdp.state_set:
-    old_states.append(state.value)
-while True:
-    mdp = planner.value_iteration(mdp)
-    checker = 0
-    # print("yay")
-    for state in range(len(mdp.state_set)):
-        if abs(mdp.state_set[state].value - old_states[state]) <= 0.000001:
-            # print(mdp.state_set[state].value, old_states[state])
-            pass
-        else:
-            checker = 1
-            break
+if __name__ == "__main__":
+    parser.add_argument("--grid", type = str)
+    args = parser.parse_args()
+    file = r"{}".format(args.grid)
+    matrix_global = text_to_matrix(file)
+    state_index_matrix_global = give_index(file)
+    mdp = matrix_to_mdp(state_index_matrix_global, file)
     old_states = []
-    if checker == 0:
-        break
     for state in mdp.state_set:
         old_states.append(state.value)
-
-
-# print(mdp.state_set[mdp.end[0]].index)
-counter = 0
-for y in range(len(state_index_matrix_global)):
-    for x in range(len(state_index_matrix_global)):
-        if state_index_matrix_global[y][x] is None:
-            pass
-        else:
-            state_index_matrix_global[y][x] = mdp.state_set[counter].value
-            counter += 1
-for i in state_index_matrix_global:
-    print(i)
-
-decoder.path_find(mdp, mdp.state_set[mdp.start])
+    while True:
+        mdp = planner.value_iteration(mdp)
+        checker = 0
+        for state in range(len(mdp.state_set)):
+            if abs(mdp.state_set[state].value - old_states[state]) <= 0.000001:
+                pass
+            else:
+                checker = 1
+                break
+        old_states = []
+        if checker == 0:
+            break
+        for state in mdp.state_set:
+            old_states.append(state.value)
+    decoder.path_find(mdp, mdp.state_set[mdp.start])

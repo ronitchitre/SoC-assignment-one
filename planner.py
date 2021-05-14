@@ -2,6 +2,8 @@
 # MDP Solver
 
 import planner_class
+import argparse
+parser = argparse.ArgumentParser()
 from math import inf
 
 
@@ -46,9 +48,13 @@ def value_iteration(mdp):
                 ERR = min(float(abs(old_value - state.value)), ERR)
     return mdp
 
+if __name__ == "__main__":
+    parser.add_argument("--mdp", type = str)
+    args = parser.parse_args()
+    address = f"{args.mdp}"
+    print(type(address))
+    given_MDP = planner_class.data_reader(address)
+    given_MDP = value_iteration(given_MDP)
 
-# given_MDP = planner_class.data_reader(r"data/mdp/continuing-mdp-50-20.txt")
-# given_MDP = value_iteration(given_MDP)
-#
-# for i in given_MDP.state_set:
-#     print(i.value, i.optimal_action.index)
+    for state in given_MDP.state_set:
+        print(state.value, state.optimal_action.index)
